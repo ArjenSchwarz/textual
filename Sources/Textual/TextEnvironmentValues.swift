@@ -20,6 +20,12 @@ public struct TextEnvironmentValues: Hashable, Sendable {
   /// Properties that control how Textual renders math expressions.
   public var mathProperties: MathProperties
 
+  /// Background color for non-current search matches.
+  public var searchMatchBackground: DynamicColor
+
+  /// Background color for the currently selected search match.
+  public var searchMatchCurrentBackground: DynamicColor
+
   /// The current color scheme in the environment.
   public var colorScheme: ColorScheme
 
@@ -40,6 +46,14 @@ public struct TextEnvironmentValues: Hashable, Sendable {
     legibilityWeight: LegibilityWeight? = nil,
     emojiProperties: EmojiProperties = .init(),
     mathProperties: MathProperties = .init(),
+    searchMatchBackground: DynamicColor = DynamicColor(
+      light: Color.yellow.opacity(0.5),
+      dark: Color.yellow.opacity(0.4)
+    ),
+    searchMatchCurrentBackground: DynamicColor = DynamicColor(
+      light: Color.orange.opacity(0.6),
+      dark: Color.orange.opacity(0.5)
+    ),
     colorScheme: ColorScheme = .light,
     colorSchemeContrast: ColorSchemeContrast = .standard
   ) {
@@ -48,6 +62,8 @@ public struct TextEnvironmentValues: Hashable, Sendable {
     self.legibilityWeight = legibilityWeight
     self.emojiProperties = emojiProperties
     self.mathProperties = mathProperties
+    self.searchMatchBackground = searchMatchBackground
+    self.searchMatchCurrentBackground = searchMatchCurrentBackground
     self.colorScheme = colorScheme
     self.colorSchemeContrast = colorSchemeContrast
   }
@@ -61,6 +77,8 @@ extension EnvironmentValues {
       legibilityWeight: legibilityWeight,
       emojiProperties: emojiProperties,
       mathProperties: mathProperties,
+      searchMatchBackground: searchMatchBackground,
+      searchMatchCurrentBackground: searchMatchCurrentBackground,
       colorScheme: colorScheme,
       colorSchemeContrast: colorSchemeContrast
     )
