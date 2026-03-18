@@ -20,7 +20,7 @@ struct BlockQuoteDemo: View {
       Section {
         StructuredText(
           markdown: content,
-          patternOptions: .init(emoji: .mastoEmoji)
+          syntaxExtensions: [.emoji(.mastoEmoji)]
         )
         .textual.textSelection(.enabled)
       } header: {
@@ -30,7 +30,7 @@ struct BlockQuoteDemo: View {
       Section("GitHub Style") {
         StructuredText(
           markdown: content,
-          patternOptions: .init(emoji: .mastoEmoji)
+          syntaxExtensions: [.emoji(.mastoEmoji)]
         )
         .textual.structuredTextStyle(.gitHub)
       }

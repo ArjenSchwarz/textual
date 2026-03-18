@@ -1,10 +1,10 @@
 import Foundation
 
-/// A custom emoji definition used during pattern expansion after Markdown parsing.
+/// A custom emoji definition used during syntax extension expansion after Markdown parsing.
 ///
-/// You can pass a set of `Emoji` values in
-/// ``AttributedStringMarkdownParser/PatternOptions`` to expand
-/// `:shortcode:` sequences into inline attachments.
+/// You can pass a set of `Emoji` values by adding
+/// ``AttributedStringMarkdownParser/SyntaxExtension/emoji(_:)`` to
+/// `syntaxExtensions` to expand `:shortcode:` sequences into inline attachments.
 public struct Emoji: Hashable, Sendable, Codable {
   /// The shortcode used in the markup, without surrounding `:` characters.
   public let shortcode: String

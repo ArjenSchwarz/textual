@@ -27,9 +27,9 @@ struct AttachmentLoaderDemo: View {
 
             The same image is used as the `sad_dog` emoji :sad_dog:.
             """,
-          patternOptions: .init(
-            emoji: [.init(shortcode: "sad_dog", url: URL(string: "sad_dog")!)]
-          )
+          syntaxExtensions: [
+            .emoji([.init(shortcode: "sad_dog", url: URL(string: "sad_dog")!)])
+          ]
         )
         .textual.imageAttachmentLoader(.image(named: \.lastPathComponent))
         .textual.emojiAttachmentLoader(.emoji(named: \.lastPathComponent))

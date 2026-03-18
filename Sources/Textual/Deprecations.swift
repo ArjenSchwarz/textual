@@ -1,5 +1,100 @@
 import SwiftUI
 
+// MARK: - Deprecated after 0.2.1
+
+extension StructuredText {
+  @available(*, deprecated, message: "Use 'init(markdown:baseURL:syntaxExtensions:)' instead.")
+  @_disfavoredOverload
+  public init(
+    markdown: String,
+    baseURL: URL? = nil,
+    patternOptions: AttributedStringMarkdownParser.PatternOptions = .init()
+  ) {
+    self.init(
+      markdown,
+      parser: .markdown(
+        baseURL: baseURL,
+        patternOptions: patternOptions
+      )
+    )
+  }
+}
+
+extension InlineText {
+  @available(*, deprecated, message: "Use 'init(markdown:baseURL:syntaxExtensions:)' instead.")
+  @_disfavoredOverload
+  public init(
+    markdown: String,
+    baseURL: URL? = nil,
+    patternOptions: AttributedStringMarkdownParser.PatternOptions = .init()
+  ) {
+    self.init(
+      markdown,
+      parser: .inlineMarkdown(
+        baseURL: baseURL,
+        patternOptions: patternOptions
+      )
+    )
+  }
+}
+
+extension AttributedStringMarkdownParser {
+  @available(*, deprecated, message: "Use 'SyntaxExtension' instead.")
+  public struct PatternOptions: Hashable, Sendable {
+    public var emoji: Set<Emoji>
+    public var mathExpressions: Bool
+
+    public init(emoji: Set<Emoji> = [], mathExpressions: Bool = false) {
+      self.emoji = emoji
+      self.mathExpressions = mathExpressions
+    }
+  }
+
+  @available(*, deprecated, message: "Use 'init(baseURL:options:syntaxExtensions:)' instead.")
+  @_disfavoredOverload
+  public init(
+    baseURL: URL?,
+    options: AttributedString.MarkdownParsingOptions = .init(),
+    patternOptions: PatternOptions = .init()
+  ) {
+    self.init(
+      baseURL: baseURL,
+      options: options,
+      syntaxExtensions: [
+        patternOptions.emoji.isEmpty ? nil : .emoji(patternOptions.emoji),
+        patternOptions.mathExpressions ? .math : nil,
+      ].compactMap(\.self)
+    )
+  }
+}
+
+extension MarkupParser where Self == AttributedStringMarkdownParser {
+  @available(*, deprecated, message: "Use 'inlineMarkdown(baseURL:syntaxExtensions:)' instead.")
+  @_disfavoredOverload
+  public static func inlineMarkdown(
+    baseURL: URL? = nil,
+    patternOptions: AttributedStringMarkdownParser.PatternOptions = .init()
+  ) -> Self {
+    .init(
+      baseURL: baseURL,
+      options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace),
+      patternOptions: patternOptions
+    )
+  }
+
+  @available(*, deprecated, message: "Use 'markdown(baseURL:syntaxExtensions:)' instead.")
+  @_disfavoredOverload
+  public static func markdown(
+    baseURL: URL? = nil,
+    patternOptions: AttributedStringMarkdownParser.PatternOptions = .init()
+  ) -> Self {
+    .init(
+      baseURL: baseURL,
+      patternOptions: patternOptions
+    )
+  }
+}
+
 // MARK: - Deprecated after 0.2.0
 
 extension StructuredText.TableStyleConfiguration {

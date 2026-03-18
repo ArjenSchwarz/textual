@@ -26,7 +26,7 @@ struct InlineTextDemo: View {
             clicks (though sometimes I still end up a bit **:confused_dog:** or _small \
             :confused_dog:_... plus another :confused_dog: for good measure).
             """,
-          patternOptions: .init(emoji: .mastoEmoji)
+          syntaxExtensions: [.emoji(.mastoEmoji)]
         )
         .textual.inlineStyle(
           InlineStyle()

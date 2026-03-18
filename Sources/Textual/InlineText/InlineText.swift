@@ -41,7 +41,7 @@ import SwiftUI
 /// Images are decoded using the system image codecs. Supported formats typically include JPEG and
 /// PNG, animated GIF and APNG, WebP, and HEIC/HEICS.
 ///
-/// Custom emoji can be defined and substituted during pattern expansion:
+/// Custom emoji can be defined and substituted using syntax extensions:
 ///
 /// ```swift
 /// let emoji: Set<Emoji> = [
@@ -57,16 +57,16 @@ import SwiftUI
 ///
 /// InlineText(
 ///   markdown: "Even when the build fails :confused_dog:, a quick refactor helps :doge:.",
-///   patternOptions: .init(emoji: emoji)
+///   syntaxExtensions: [.emoji(emoji)]
 /// )
 /// ```
 ///
-/// Math expressions are supported when you enable them in `patternOptions`:
+/// Math expressions are supported when you include `.math` in `syntaxExtensions`:
 ///
 /// ```swift
 /// InlineText(
 ///   markdown: "The area is $A = \\pi r^2$.",
-///   patternOptions: .init(mathExpressions: true)
+///   syntaxExtensions: [.math]
 /// )
 /// ```
 ///
@@ -135,17 +135,17 @@ extension InlineText {
   ///   - baseURL: The base URL to use when resolving Markdown URLs. The initializer treats URLs as
   ///     being relative to this URL. If this value is `nil`, the initializer doesn’t resolve URLs.
   ///     The default is `nil`.
-  ///   - patternOptions: Options for pattern substitution after markdown parsing.
+  ///   - syntaxExtensions: Custom syntax extensions applied after markdown parsing.
   public init(
     markdown: String,
     baseURL: URL? = nil,
-    patternOptions: AttributedStringMarkdownParser.PatternOptions = .init()
+    syntaxExtensions: [AttributedStringMarkdownParser.SyntaxExtension] = []
   ) {
     self.init(
       markdown,
       parser: .inlineMarkdown(
         baseURL: baseURL,
-        patternOptions: patternOptions
+        syntaxExtensions: syntaxExtensions
       )
     )
   }
@@ -164,7 +164,7 @@ extension InlineText {
         and when it doesn’t, I just roll with it :dogroll: until the solution finally \
         clicks (though sometimes I still end up a bit :sad_dog:).
         """,
-      patternOptions: .init(emoji: .previewEmoji)
+      syntaxExtensions: [.emoji(.previewEmoji)]
     )
     .padding()
   }

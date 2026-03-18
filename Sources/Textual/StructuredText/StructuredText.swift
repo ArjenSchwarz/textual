@@ -143,26 +143,26 @@ extension StructuredText {
   /// - Parameters:
   ///   - markdown: The Markdown source to render.
   ///   - baseURL: A base URL used to resolve relative links and image URLs.
-  ///   - patternOptions: Options for pattern substitution after markdown parsing.
+  ///   - syntaxExtensions: Custom syntax extensions applied after markdown parsing.
   ///
-  /// Math expressions are supported when you enable them in `patternOptions`:
+  /// Math expressions are supported when you include `.math` in `syntaxExtensions`:
   ///
   /// ```swift
   /// StructuredText(
   ///   markdown: "The area is $A = \\pi r^2$.",
-  ///   patternOptions: .init(mathExpressions: true)
+  ///   syntaxExtensions: [.math]
   /// )
   /// ```
   public init(
     markdown: String,
     baseURL: URL? = nil,
-    patternOptions: AttributedStringMarkdownParser.PatternOptions = .init()
+    syntaxExtensions: [AttributedStringMarkdownParser.SyntaxExtension] = []
   ) {
     self.init(
       markdown,
       parser: .markdown(
         baseURL: baseURL,
-        patternOptions: patternOptions
+        syntaxExtensions: syntaxExtensions
       )
     )
   }
@@ -223,7 +223,7 @@ extension StructuredText {
         You can substitute shortcodes with inline images. For example, :dog: and :cat: render \
         as small inline attachments that flow with the surrounding text.
         """,
-      patternOptions: .init(emoji: emoji)
+      syntaxExtensions: [.emoji(emoji)]
     )
     .padding()
   }

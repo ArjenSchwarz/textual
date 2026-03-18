@@ -98,7 +98,7 @@ struct StructuredTextDemo: View {
       Toggle("Wrap Code Blocks", isOn: $wrapCode)
       StructuredText(
         markdown: content,
-        patternOptions: .init(emoji: .mastoEmoji)
+        syntaxExtensions: [.emoji(.mastoEmoji)]
       )
       .textual.textSelection(.enabled)
       .textual.overflowMode(self.wrapCode ? .wrap : .scroll)

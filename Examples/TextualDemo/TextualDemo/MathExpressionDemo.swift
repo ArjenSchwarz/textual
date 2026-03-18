@@ -40,10 +40,7 @@ struct MathExpressionDemo: View {
 
             It wasn’t the model. It was a missing normalization step (again) :sad_dog:.
             """,
-          patternOptions: .init(
-            emoji: .mastoEmoji,
-            mathExpressions: true
-          )
+          syntaxExtensions: [.emoji(.mastoEmoji), .math]
         )
         .textual.textSelection(.enabled)
       }

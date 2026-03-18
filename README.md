@@ -110,7 +110,7 @@ Textual ships with Markdown support built on top of Foundation's `AttributedStri
 plug in any format that can produce strings with [`PresentationIntent`](https://developer.apple.com/documentation/foundation/presentationintent)
 attributes by conforming your parser to the `MarkupParser` protocol.
 
-The built-in Markdown parser supports pattern-based expansions, like custom emoji. You can define emoji with
+The built-in Markdown parser supports syntax extensions, like custom emoji. You can define emoji with
 shortcodes that will be substituted after parsing:
 
 ```swift
@@ -127,16 +127,16 @@ let emoji: Set<Emoji> = [
 
 InlineText(
   markdown: "Shipped the new feature :rocket: and it's working :sparkles:",
-  patternOptions: .init(emoji: emoji)
+  syntaxExtensions: [.emoji(emoji)]
 )
 ```
 
-Math expressions are also supported when you enable them in `patternOptions`:
+Math expressions are also supported when you include `.math` in `syntaxExtensions`:
 
 ```swift
 StructuredText(
   markdown: "The area is $A = \\pi r^2$.",
-  patternOptions: .init(mathExpressions: true)
+  syntaxExtensions: [.math]
 )
 ```
 
