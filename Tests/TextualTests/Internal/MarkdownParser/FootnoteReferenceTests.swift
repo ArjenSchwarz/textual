@@ -17,12 +17,12 @@ struct FootnoteReferenceTests {
   private static let multiProvider = MockProvider(mapping: ["1": 1, "2": 2, "note": 3])
   private static let emptyProvider = MockProvider(mapping: [:])
 
-  // MARK: - PatternProcessor.Rule Tests
+  // MARK: - SyntaxExtension Tests
 
   @Test func resolvedReferenceIsReplacedWithDisplayNumber() throws {
     // given
-    let processor = PatternProcessor(
-      rules: [.footnoteReferences(provider: Self.singleProvider)]
+    let processor = AttributedStringMarkdownParser.PatternProcessor(
+      syntaxExtensions: [.footnoteReferences(provider: Self.singleProvider)]
     )
     let input = try AttributedString(
       markdown: "See this[^1] for details",
@@ -40,8 +40,8 @@ struct FootnoteReferenceTests {
 
   @Test func unresolvedReferenceIsLeftAsPlainText() throws {
     // given
-    let processor = PatternProcessor(
-      rules: [.footnoteReferences(provider: Self.emptyProvider)]
+    let processor = AttributedStringMarkdownParser.PatternProcessor(
+      syntaxExtensions: [.footnoteReferences(provider: Self.emptyProvider)]
     )
     let input = try AttributedString(
       markdown: "See this[^unknown] for details",
@@ -59,8 +59,8 @@ struct FootnoteReferenceTests {
 
   @Test func footnoteReferenceAttributeIsApplied() throws {
     // given
-    let processor = PatternProcessor(
-      rules: [.footnoteReferences(provider: Self.singleProvider)]
+    let processor = AttributedStringMarkdownParser.PatternProcessor(
+      syntaxExtensions: [.footnoteReferences(provider: Self.singleProvider)]
     )
     let input = try AttributedString(
       markdown: "See this[^1] for details",
@@ -88,8 +88,8 @@ struct FootnoteReferenceTests {
 
   @Test func linkAttributeWithFootnoteURLIsApplied() throws {
     // given
-    let processor = PatternProcessor(
-      rules: [.footnoteReferences(provider: Self.singleProvider)]
+    let processor = AttributedStringMarkdownParser.PatternProcessor(
+      syntaxExtensions: [.footnoteReferences(provider: Self.singleProvider)]
     )
     let input = try AttributedString(
       markdown: "See this[^1] for details",
@@ -117,8 +117,8 @@ struct FootnoteReferenceTests {
 
   @Test func patternDoesNotMatchInsideCodeSpans() throws {
     // given
-    let processor = PatternProcessor(
-      rules: [.footnoteReferences(provider: Self.singleProvider)]
+    let processor = AttributedStringMarkdownParser.PatternProcessor(
+      syntaxExtensions: [.footnoteReferences(provider: Self.singleProvider)]
     )
     let input = try AttributedString(
       markdown: "Use `[^1]` in code and [^1] outside",
@@ -137,8 +137,8 @@ struct FootnoteReferenceTests {
 
   @Test func patternDoesNotMatchInsideInlineHTML() throws {
     // given
-    let processor = PatternProcessor(
-      rules: [.footnoteReferences(provider: Self.singleProvider)]
+    let processor = AttributedStringMarkdownParser.PatternProcessor(
+      syntaxExtensions: [.footnoteReferences(provider: Self.singleProvider)]
     )
     let input = try AttributedString(
       markdown: "Text [^1] here",
@@ -162,8 +162,8 @@ struct FootnoteReferenceTests {
 
   @Test func multipleReferencesInOneParagraphAreAllProcessed() throws {
     // given
-    let processor = PatternProcessor(
-      rules: [.footnoteReferences(provider: Self.multiProvider)]
+    let processor = AttributedStringMarkdownParser.PatternProcessor(
+      syntaxExtensions: [.footnoteReferences(provider: Self.multiProvider)]
     )
     let input = try AttributedString(
       markdown: "First[^1] and second[^2] and named[^note]",
@@ -189,8 +189,8 @@ struct FootnoteReferenceTests {
 
   @Test func adjacentReferencesAreBothProcessed() throws {
     // given
-    let processor = PatternProcessor(
-      rules: [.footnoteReferences(provider: Self.multiProvider)]
+    let processor = AttributedStringMarkdownParser.PatternProcessor(
+      syntaxExtensions: [.footnoteReferences(provider: Self.multiProvider)]
     )
     let input = try AttributedString(
       markdown: "See[^1][^2] here",
