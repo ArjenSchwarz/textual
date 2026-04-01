@@ -26,6 +26,12 @@ public struct TextEnvironmentValues: Hashable, Sendable {
   /// Background color for the currently selected search match.
   public var searchMatchCurrentBackground: DynamicColor
 
+  /// Background color for footnote badge pills.
+  public var footnoteBadgeBackground: DynamicColor
+
+  /// Foreground color for footnote badge text.
+  public var footnoteBadgeForeground: DynamicColor
+
   /// The current color scheme in the environment.
   public var colorScheme: ColorScheme
 
@@ -54,6 +60,14 @@ public struct TextEnvironmentValues: Hashable, Sendable {
       light: Color.orange.opacity(0.6),
       dark: Color.orange.opacity(0.5)
     ),
+    footnoteBadgeBackground: DynamicColor = DynamicColor(
+      light: Color.blue.opacity(0.15),
+      dark: Color.blue.opacity(0.25)
+    ),
+    footnoteBadgeForeground: DynamicColor = DynamicColor(
+      light: Color.blue,
+      dark: Color.blue.opacity(0.9)
+    ),
     colorScheme: ColorScheme = .light,
     colorSchemeContrast: ColorSchemeContrast = .standard
   ) {
@@ -64,6 +78,8 @@ public struct TextEnvironmentValues: Hashable, Sendable {
     self.mathProperties = mathProperties
     self.searchMatchBackground = searchMatchBackground
     self.searchMatchCurrentBackground = searchMatchCurrentBackground
+    self.footnoteBadgeBackground = footnoteBadgeBackground
+    self.footnoteBadgeForeground = footnoteBadgeForeground
     self.colorScheme = colorScheme
     self.colorSchemeContrast = colorSchemeContrast
   }
@@ -79,6 +95,8 @@ extension EnvironmentValues {
       mathProperties: mathProperties,
       searchMatchBackground: searchMatchBackground,
       searchMatchCurrentBackground: searchMatchCurrentBackground,
+      footnoteBadgeBackground: footnoteBadgeBackground,
+      footnoteBadgeForeground: footnoteBadgeForeground,
       colorScheme: colorScheme,
       colorSchemeContrast: colorSchemeContrast
     )

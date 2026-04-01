@@ -92,6 +92,10 @@ extension PatternTokenizer.Pattern {
   static var mathInline: Self {
     .init(regex: /\$(?!\$)((?:\\\$|[^$\n])+)\$/, tokenType: .mathInline)
   }
+
+  static var footnoteReference: Self {
+    .init(regex: /\[\^([a-zA-Z0-9_-]+)\]/, tokenType: .footnoteReference)
+  }
 }
 
 extension PatternTokenizer {
@@ -121,4 +125,5 @@ extension PatternTokenizer.TokenType {
   static let emoji: Self = "emoji"
   static let mathBlock: Self = "mathBlock"
   static let mathInline: Self = "mathInline"
+  static let footnoteReference: Self = "footnoteReference"
 }

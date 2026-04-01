@@ -16,3 +16,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   - `searchHighlightColors(match:currentMatch:)` view modifier for customization
 - Added `searchMatchBackground` and `searchMatchCurrentBackground` properties to `TextEnvironmentValues`
 - Unit tests for all new search highlight functionality
+- `FootnoteReferenceAttribute` - Custom AttributedString attribute for marking footnote reference ranges with `identifier`, `displayNumber`, and `hasSearchMatch` fields
+- `FootnoteProperty` - TextProperty that applies pill-badge styling (background, foreground, baseline offset) for footnote references
+- Footnote environment extensions:
+  - `footnoteBadgeBackground` and `footnoteBadgeForeground` environment values with dynamic light/dark colors
+  - `footnoteBadgeColors(background:foreground:)` view modifier for customization
+- Added `footnoteBadgeBackground` and `footnoteBadgeForeground` properties to `TextEnvironmentValues`
+- `footnoteReference` pattern and token type in `PatternTokenizer` for matching `[^identifier]` syntax
