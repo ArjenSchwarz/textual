@@ -26,6 +26,7 @@ public struct InlineStyle: Sendable, Hashable {
   var link: AnyTextProperty = AnyTextProperty(.foregroundColor(.accentColor))
   var strong: AnyTextProperty = AnyTextProperty(.bold)
   var strikethrough: AnyTextProperty = AnyTextProperty(.strikethroughStyle(.single))
+  var footnoteReference: AnyTextProperty = AnyTextProperty(FootnoteProperty())
 
   /// Creates an inline style with default formatting.
   public init() {}
@@ -68,6 +69,14 @@ public struct InlineStyle: Sendable, Hashable {
   /// - Returns: A new style with the modified strikethrough formatting.
   public func strikethrough<each P: TextProperty>(_ properties: repeat each P) -> Self {
     modifyingStyle { $0.strikethrough = AnyTextProperty(repeat each properties) }
+  }
+
+  /// Returns a copy of this style with custom footnote reference formatting.
+  ///
+  /// - Parameter properties: Text properties to apply to footnote reference badges.
+  /// - Returns: A new style with the modified footnote reference formatting.
+  public func footnoteReference<each P: TextProperty>(_ properties: repeat each P) -> Self {
+    modifyingStyle { $0.footnoteReference = AnyTextProperty(repeat each properties) }
   }
 
   private func modifyingStyle(_ modify: (inout Self) -> Void) -> Self {

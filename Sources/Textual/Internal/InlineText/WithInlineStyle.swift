@@ -75,6 +75,11 @@ struct WithInlineStyle<Content: View>: View {
         style.link.apply(in: &attributes, environment: environment)
       }
 
+      // Footnote reference check comes after link so badge colours override link colours
+      if run[FootnoteReferenceAttributeKey.self] != nil {
+        style.footnoteReference.apply(in: &attributes, environment: environment)
+      }
+
       output[run.range].mergeAttributes(attributes, mergePolicy: .keepNew)
     }
 
