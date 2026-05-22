@@ -77,6 +77,21 @@ extension PatternTokenizer {
   struct Pattern {
     let regex: Regex<(Substring, Substring)>
     let tokenType: TokenType
+    /// Whether this pattern should also be applied to runs marked as inline
+    /// HTML by Foundation's Markdown parser. Most patterns leave inline HTML
+    /// untouched; the HTML-comment pattern opts in because comments arrive
+    /// inside an `inlineHTML` run.
+    let processesInsideInlineHTML: Bool
+
+    init(
+      regex: Regex<(Substring, Substring)>,
+      tokenType: TokenType,
+      processesInsideInlineHTML: Bool = false
+    ) {
+      self.regex = regex
+      self.tokenType = tokenType
+      self.processesInsideInlineHTML = processesInsideInlineHTML
+    }
   }
 }
 
@@ -95,6 +110,14 @@ extension PatternTokenizer.Pattern {
 
   static var footnoteReference: Self {
     .init(regex: /\[\^([a-zA-Z0-9_-]+)\]/, tokenType: .footnoteReference)
+  }
+
+  static var htmlComment: Self {
+    .init(
+      regex: /(?s)<!--(.*?)-->/,
+      tokenType: .htmlComment,
+      processesInsideInlineHTML: true
+    )
   }
 }
 
@@ -126,4 +149,5 @@ extension PatternTokenizer.TokenType {
   static let mathBlock: Self = "mathBlock"
   static let mathInline: Self = "mathInline"
   static let footnoteReference: Self = "footnoteReference"
+  static let htmlComment: Self = "htmlComment"
 }

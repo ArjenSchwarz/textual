@@ -23,3 +23,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   - `footnoteBadgeColors(background:foreground:)` view modifier for customization
 - Added `footnoteBadgeBackground` and `footnoteBadgeForeground` properties to `TextEnvironmentValues`
 - `footnoteReference` pattern and token type in `PatternTokenizer` for matching `[^identifier]` syntax
+- `HTMLCommentRangeAttribute` - Custom AttributedString attribute marking rendered HTML comment ranges with their inner text
+- `HTMLCommentAppearance` - Value type carrying foreground colour, prefix SF Symbol name, italic flag, and accessibility labels for the htmlComments syntax extension
+- `SyntaxExtension.htmlComments(visible:appearance:)` - Replaces inline HTML comments (`<!-- ... -->`) with either an empty run (hidden) or a styled symbol + inner text run (visible); code spans / code blocks are left untouched
+- `PatternTokenizer.Pattern.processesInsideInlineHTML` flag and `htmlComment` pattern / token type
+- `PatternProcessor` now tokenizes inline-HTML runs using only patterns that opt in via `processesInsideInlineHTML`
+- `PatternProcessor.isInsideCodeSpan(range:in:)` helper for syntax extensions that need to skip code-span ranges
