@@ -88,6 +88,47 @@ InlineText(attributedString: result.highlighted)
     )
 ```
 
+### HTML Comments
+
+#### HTMLCommentRangeAttribute
+**File:** `Sources/Textual/Attributes/HTMLCommentRangeAttribute.swift`
+
+A custom `AttributedString` attribute that marks runs produced by the
+`SyntaxExtension.htmlComments(visible:appearance:)` factory. Each attribute
+carries the comment's `innerText` so that downstream consumers (typically an
+accessibility composer) can identify and announce the comment without
+re-parsing the markdown source.
+
+#### HTMLCommentAppearance
+**File:** `Sources/Textual/MarkdownParser/HTMLComments.swift`
+
+A `Sendable` value type that carries the foreground colour, SF Symbol name,
+italic flag, and accessibility labels used by the htmlComments extension.
+
+#### SyntaxExtension.htmlComments(visible:appearance:)
+**File:** `Sources/Textual/MarkdownParser/HTMLComments.swift`
+
+Replaces inline HTML comments (`<!-- ... -->`) with either an empty run (when
+`visible == false`) or a styled symbol + inner text run (when `visible == true`).
+Comments inside inline code spans and code blocks are left untouched. Empty or
+whitespace-only comments produce no output regardless of `visible`.
+
+#### PatternProcessor changes
+**File:** `Sources/Textual/Internal/MarkdownParser/PatternProcessor.swift`
+
+- New `PatternProcessor.isInsideCodeSpan(range:in:)` helper for syntax
+  extensions that need to skip code-span / code-block ranges.
+- The processor now tokenizes inline-HTML runs using only those patterns whose
+  `processesInsideInlineHTML` flag is `true`. The HTML-comment pattern opts
+  in; all other patterns continue to skip inline HTML.
+
+#### PatternTokenizer changes
+**File:** `Sources/Textual/Internal/MarkdownParser/PatternTokenizer.swift`
+
+- New `htmlComment` pattern matching `<!--...-->` and corresponding
+  `TokenType.htmlComment`.
+- New `processesInsideInlineHTML` flag on `Pattern` (defaults to `false`).
+
 ## Compatibility
 
 - Requires iOS 17+ / macOS 14+
