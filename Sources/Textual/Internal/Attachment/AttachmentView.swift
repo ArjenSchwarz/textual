@@ -11,24 +11,42 @@ import SwiftUI
 // Selection integration:
 // On macOS, when text selection is enabled, object-style attachments are dimmed when they fall
 // inside the selected range. Inline-style attachments (for example, emoji) are not dimmed.
+//
+// The `TextSelectionModel` is supplied by the parent (`AttachmentOverlay`) instead of being read
+// from `@Environment` here. This view is created inside a `GeometryReader`, and an `@Environment`
+// observable read in that position re-arms the layout subgraph on every measurement, producing an
+// infinite SwiftUI layout invalidation loop (issue #26). The read happens even when a fragment has
+// no attachments, so it must be hoisted out of the GeometryReader regardless of attachment count.
 
 struct AttachmentView: View {
-  #if TEXTUAL_ENABLE_TEXT_SELECTION && canImport(AppKit)
-    @Environment(TextSelectionModel.self) private var textSelectionModel: TextSelectionModel?
-  #endif
   private let attachments: Set<AnyAttachment>
   private let origin: CGPoint
   private let layout: Text.Layout
+  #if TEXTUAL_ENABLE_TEXT_SELECTION && canImport(AppKit)
+    private let textSelectionModel: TextSelectionModel?
 
-  init(
-    attachments: Set<AnyAttachment>,
-    origin: CGPoint,
-    layout: Text.Layout
-  ) {
-    self.attachments = attachments
-    self.origin = origin
-    self.layout = layout
-  }
+    init(
+      attachments: Set<AnyAttachment>,
+      origin: CGPoint,
+      layout: Text.Layout,
+      textSelectionModel: TextSelectionModel?
+    ) {
+      self.attachments = attachments
+      self.origin = origin
+      self.layout = layout
+      self.textSelectionModel = textSelectionModel
+    }
+  #else
+    init(
+      attachments: Set<AnyAttachment>,
+      origin: CGPoint,
+      layout: Text.Layout
+    ) {
+      self.attachments = attachments
+      self.origin = origin
+      self.layout = layout
+    }
+  #endif
 
   var body: some View {
     Canvas { context, _ in
