@@ -2,6 +2,14 @@
   import SwiftUI
 
   extension TextLayoutCollection {
+    /// Whether `point` lies within any layout’s frame (slightly inflated so
+    /// clicks in the gaps between adjacent lines still count as text).
+    func containsText(at point: CGPoint) -> Bool {
+      layouts.contains { layout in
+        layout.frame.insetBy(dx: -2, dy: -2).contains(point)
+      }
+    }
+
     func url(for point: CGPoint) -> URL? {
       guard let layout = layouts.first(where: { $0.frame.contains(point) }) else {
         return nil

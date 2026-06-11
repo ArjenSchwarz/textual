@@ -118,10 +118,10 @@ public struct StructuredText: View {
   public var body: some View {
     WithAttachments(attributedString) {
       BlockContent(content: $0)
-        .modifier(TextSelectionInteraction())
-        .modifier(TextSelectionCoordination())
     }
-    .coordinateSpace(.textContainer)
+    // A StructuredText is its own selection scope; inside an enclosing
+    // scope it dissolves into it (see TextSelectionScope.swift).
+    .modifier(TextSelectionScopeModifier())
     .onChange(of: markup, initial: true) {
       markupDidChange(markup)
     }

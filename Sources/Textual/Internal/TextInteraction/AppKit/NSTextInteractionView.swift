@@ -46,9 +46,19 @@
 
       if isExcluded {
         return nil
-      } else {
-        return super.hitTest(point)
       }
+
+      // The overlay can span a whole document scope containing interactive
+      // non-text views (buttons, disclosure rows, embedded cards). Only
+      // claim events over actual text so everything else falls through —
+      // unless a selection is active, in which case clicking anywhere
+      // should clear it, matching platform behaviour.
+      let hasActiveSelection = model.selectedRange.map { !$0.isCollapsed } ?? false
+      if !hasActiveSelection && !model.containsText(at: localPoint) {
+        return nil
+      }
+
+      return super.hitTest(point)
     }
 
     override func mouseDown(with event: NSEvent) {

@@ -25,6 +25,12 @@
       }
     }
 
+    /// Increments whenever the layout collection is replaced (rows realizing
+    /// inside lazy containers, text re-layout). Observable so the host-level
+    /// selection highlight can recompute its rectangles without holding a
+    /// reference to the collection itself.
+    private(set) var layoutGeneration = 0
+
     @ObservationIgnored
     var selectionWillChange: (() -> Void)?
 
@@ -52,6 +58,7 @@
 
       let oldLayoutCollection = self.layoutCollection
       self.layoutCollection = layoutCollection
+      layoutGeneration += 1
 
       guard
         let selectedRange,
@@ -78,6 +85,14 @@
 
     func url(for point: CGPoint) -> URL? {
       layoutCollection.url(for: point)
+    }
+
+    /// Whether `point` lies within the bounds of any text layout in the
+    /// collection. The interaction view uses this to pass clicks outside
+    /// text through to the views below (buttons, disclosure rows, embedded
+    /// cards) when the selection scope spans a whole document.
+    func containsText(at point: CGPoint) -> Bool {
+      layoutCollection.containsText(at: point)
     }
 
     func layoutIndex(of layout: Text.Layout) -> Int? {

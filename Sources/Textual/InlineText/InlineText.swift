@@ -114,10 +114,10 @@ public struct InlineText: View {
     WithAttachments(attributedString) {
       WithInlineStyle($0) {
         TextFragment($0)
-          .modifier(TextSelectionInteraction())
+          .modifier(StandaloneTextSelectionInteraction())
       }
     }
-    .coordinateSpace(.textContainer)
+    .modifier(StandaloneTextContainer())
     .onChange(of: markup, initial: true) { _, value in
       self.attributedString = (try? parser.attributedString(for: value)) ?? .init()
     }

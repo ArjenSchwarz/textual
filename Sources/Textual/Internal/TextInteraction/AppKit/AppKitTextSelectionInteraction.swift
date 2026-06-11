@@ -23,9 +23,12 @@
 
     func body(content: Content) -> some View {
       content
-        // We need the selection model at text fragment level for the
-        // text selection background and selected attachment dimming
+        // We need the selection model at text fragment level for
+        // selected attachment dimming
         .environment(model)
+        // One highlight layer per scope instead of one per fragment; see
+        // the overview in AppKitTextSelectionView.
+        .background(AppKitTextSelectionView(model: model))
         .overlayPreferenceValue(OverflowFrameKey.self) { frames in
           AppKitTextInteractionOverlay(model: model, overflowFrames: frames)
             .onContinuousHover { phase in
@@ -37,15 +40,27 @@
     private func updateCursor(for phase: HoverPhase, model: TextSelectionModel) {
       switch phase {
       case .active(let location):
-        let cursor =
-          model.url(for: location) != nil
-          ? NSCursor.pointingHand
-          : NSCursor.iBeam
-        if !cursorPushed {
-          cursor.push()
-          cursorPushed = true
+        // The interaction overlay can span a whole document scope, so only
+        // show text cursors when the pointer is actually over text.
+        let cursor: NSCursor?
+        if model.url(for: location) != nil {
+          cursor = .pointingHand
+        } else if model.containsText(at: location) {
+          cursor = .iBeam
         } else {
-          cursor.set()
+          cursor = nil
+        }
+
+        if let cursor {
+          if !cursorPushed {
+            cursor.push()
+            cursorPushed = true
+          } else {
+            cursor.set()
+          }
+        } else if cursorPushed {
+          NSCursor.pop()
+          cursorPushed = false
         }
       case .ended:
         if cursorPushed {

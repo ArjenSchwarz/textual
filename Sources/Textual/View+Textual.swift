@@ -157,6 +157,40 @@ extension TextualNamespace where Base: View {
     #endif
   }
 
+  /// Declares a text selection scope around an arbitrary container of
+  /// Textual views.
+  ///
+  /// By default, every ``InlineText`` and ``StructuredText`` owns its own
+  /// selection machinery. When an application composes a document out of
+  /// many separate ``InlineText`` views (one per markdown block, for
+  /// example), wrap their container in a selection scope so a single
+  /// document-level interaction layer serves all of them:
+  ///
+  /// ```swift
+  /// LazyVStack(alignment: .leading) {
+  ///   ForEach(blocks) { block in
+  ///     InlineText(markdown: block.markdown)
+  ///   }
+  /// }
+  /// .textual.textSelectionScope()
+  /// .textual.textSelection(.enabled)
+  /// ```
+  ///
+  /// Views inside the scope publish their text layouts into it instead of
+  /// installing per-view selection plumbing, which keeps lazy containers
+  /// convergent. Apply ``textSelection(_:)`` *outside* the scope modifier to
+  /// enable selection for the scope; individual views inside may opt out
+  /// with `.textual.textSelection(.disabled)`. Selection spans the whole
+  /// scope (one selection across all member views), but only text in views
+  /// the lazy container has realized is selectable. Scopes do not nest — an
+  /// inner scope (including ``StructuredText``'s implicit one) dissolves
+  /// into the outermost scope.
+  @available(tvOS, unavailable)
+  @available(watchOS, unavailable)
+  public func textSelectionScope() -> some View {
+    base.modifier(TextSelectionScopeModifier())
+  }
+
   /// Sets the spacing used between table cells in ``StructuredText``.
   public func tableCellSpacing(
     horizontal: CGFloat? = nil,
