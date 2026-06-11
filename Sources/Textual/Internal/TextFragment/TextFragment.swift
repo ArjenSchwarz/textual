@@ -31,6 +31,9 @@ import SwiftUI
 
 struct TextFragment<Content: AttributedStringProtocol>: View {
   @Environment(\.textEnvironment) private var textEnvironment
+  #if TEXTUAL_ENABLE_TEXT_SELECTION
+    @Environment(\.isInsideTextSelectionScope) private var isInsideScope
+  #endif
   @State private var textBuilder: TextBuilder?
 
   private let content: Content
@@ -40,9 +43,17 @@ struct TextFragment<Content: AttributedStringProtocol>: View {
   }
 
   var body: some View {
-    text
+    #if TEXTUAL_ENABLE_TEXT_SELECTION
+      let pinContainerHeight = isInsideScope
+    #else
+      let pinContainerHeight = false
+    #endif
+    return text
       .customAttribute(TextFragmentAttribute())
-      .onGeometryChange(for: CGSize?.self, of: \.textContainerSize) { size in
+      .onGeometryChange(
+        for: CGSize?.self,
+        of: { Self.containerSize(of: $0, pinningHeight: pinContainerHeight) }
+      ) { size in
         guard let size, let textBuilder else { return }
         textBuilder.sizeChanged(size, environment: textEnvironment)
       }
@@ -51,6 +62,27 @@ struct TextFragment<Content: AttributedStringProtocol>: View {
       }
       .modifier(AttachmentOverlay(attachments: content.attachments()))
       .modifier(TextLinkInteraction())
+  }
+
+  /// The container size attachments are proposed against.
+  ///
+  /// Inside a selection scope, `.textContainer` is the scope's whole content
+  /// — in a lazy container its *height* estimate moves on every row
+  /// realization. Pinning the height to a constant keeps this observation
+  /// firing on width changes only; otherwise every realized fragment is
+  /// re-proposed on every scroll frame, and the resulting invalidations feed
+  /// the lazy re-measurement that caused them (T-1513 recurrence: hang after
+  /// scrolling a document up and down). Width is what attachment sizing
+  /// actually keys on; a document-scope height was never a meaningful cap.
+  private nonisolated static func containerSize(
+    of proxy: GeometryProxy,
+    pinningHeight: Bool
+  ) -> CGSize? {
+    guard var size = proxy.textContainerSize else { return nil }
+    if pinningHeight {
+      size.height = .greatestFiniteMagnitude
+    }
+    return size
   }
 
   private var text: Text {

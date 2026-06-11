@@ -22,6 +22,7 @@ extension TextFragment {
 
     @ObservationIgnored private let content: Content
     @ObservationIgnored private let cache: NSCache<KeyBox<[AttachmentKey: CGSize]>, Box<Text>>
+    @ObservationIgnored private var currentKey: KeyBox<[AttachmentKey: CGSize]>?
 
     init(_ content: Content, environment: TextEnvironmentValues) {
       let attachmentSizes = content.attachmentSizes(for: .unspecified, in: environment)
@@ -35,12 +36,24 @@ extension TextFragment {
       self.cache = NSCache()
       self.cache.countLimit = 10
 
-      self.cache.setObject(Box(self.text), forKey: KeyBox(attachmentSizes))
+      let key = KeyBox(attachmentSizes)
+      self.currentKey = key
+      self.cache.setObject(Box(self.text), forKey: key)
     }
 
     func sizeChanged(_ size: CGSize, environment: TextEnvironmentValues) {
       let attachmentSizes = content.attachmentSizes(for: .init(size), in: environment)
       let cacheKey = KeyBox(attachmentSizes)
+
+      // Skip the write when the resolved attachment sizes are unchanged
+      // (always the case for content without attachments). `text` is
+      // observable, and an equal-value write still invalidates every view
+      // reading it — under a lazy container that re-invalidation feeds the
+      // very geometry churn that triggered this call (T-1513 recurrence).
+      guard cacheKey != currentKey else {
+        return
+      }
+      currentKey = cacheKey
 
       if let text = cache.object(forKey: cacheKey) {
         self.text = text.wrappedValue
