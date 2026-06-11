@@ -12,23 +12,38 @@ import SwiftUI
 struct TextLinkInteraction: ViewModifier {
   @Environment(\.openURL) private var openURL
 
+  private let hasLinks: Bool
+
+  /// - Parameter hasLinks: whether the fragment's content contains any link
+  ///   runs. Fragments without links skip the preference + GeometryReader
+  ///   overlay entirely — it would never receive a meaningful tap, and the
+  ///   per-fragment layer re-evaluates on every measurement pass, which adds
+  ///   up under lazy containers with many realized fragments.
+  init(hasLinks: Bool = true) {
+    self.hasLinks = hasLinks
+  }
+
   func body(content: Content) -> some View {
     #if TEXTUAL_ENABLE_LINKS
-      content
-        .overlayPreferenceValue(Text.LayoutKey.self) { value in
-          if let anchoredLayout = value.first {
-            GeometryReader { geometry in
-              Color.clear
-                .contentShape(.rect)
-                .gesture(
-                  tap(
-                    origin: geometry[anchoredLayout.origin],
-                    layout: anchoredLayout.layout
+      if hasLinks {
+        content
+          .overlayPreferenceValue(Text.LayoutKey.self) { value in
+            if let anchoredLayout = value.first {
+              GeometryReader { geometry in
+                Color.clear
+                  .contentShape(.rect)
+                  .gesture(
+                    tap(
+                      origin: geometry[anchoredLayout.origin],
+                      layout: anchoredLayout.layout
+                    )
                   )
-                )
+              }
             }
           }
-        }
+      } else {
+        content
+      }
     #else
       content
     #endif

@@ -25,26 +25,36 @@ struct AttachmentOverlay: ViewModifier {
   }
 
   func body(content: Content) -> some View {
-    content
-      .overlayPreferenceValue(Text.LayoutKey.self) { value in
-        if let anchoredLayout = value.first {
-          GeometryReader { geometry in
-            #if TEXTUAL_ENABLE_TEXT_SELECTION && canImport(AppKit)
-              AttachmentView(
-                attachments: attachments,
-                origin: geometry[anchoredLayout.origin],
-                layout: anchoredLayout.layout,
-                textSelectionModel: textSelectionModel
-              )
-            #else
-              AttachmentView(
-                attachments: attachments,
-                origin: geometry[anchoredLayout.origin],
-                layout: anchoredLayout.layout
-              )
-            #endif
+    if attachments.isEmpty {
+      // No attachments to draw: skip the preference + GeometryReader +
+      // selection-model-observing overlay entirely. For plain-text
+      // fragments this removes the last per-fragment layer that both
+      // re-evaluates on every measurement pass and subscribes to the
+      // selection model — under a document-level selection scope there
+      // are thousands of such fragments alive at once.
+      content
+    } else {
+      content
+        .overlayPreferenceValue(Text.LayoutKey.self) { value in
+          if let anchoredLayout = value.first {
+            GeometryReader { geometry in
+              #if TEXTUAL_ENABLE_TEXT_SELECTION && canImport(AppKit)
+                AttachmentView(
+                  attachments: attachments,
+                  origin: geometry[anchoredLayout.origin],
+                  layout: anchoredLayout.layout,
+                  textSelectionModel: textSelectionModel
+                )
+              #else
+                AttachmentView(
+                  attachments: attachments,
+                  origin: geometry[anchoredLayout.origin],
+                  layout: anchoredLayout.layout
+                )
+              #endif
+            }
           }
         }
-      }
+    }
   }
 }

@@ -61,7 +61,7 @@ struct TextFragment<Content: AttributedStringProtocol>: View {
         self.textBuilder = TextBuilder(newValue, environment: textEnvironment)
       }
       .modifier(AttachmentOverlay(attachments: content.attachments()))
-      .modifier(TextLinkInteraction())
+      .modifier(TextLinkInteraction(hasLinks: content.runs.contains { $0.link != nil }))
   }
 
   /// The container size attachments are proposed against.
